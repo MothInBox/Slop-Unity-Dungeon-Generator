@@ -50,6 +50,8 @@ public class Generator : MonoBehaviour
     public int trueMaxDepth = 255;
     [Tooltip("If true, whenever the end room is places, the depth will be capped to its depth value. This should ensure end room generation at the cost of a inconsistent depth.")]
     public bool depthEqualToEndRoom;
+    [Tooltip("Number of attempts the generator will retry with a new seed if it fails to meet the required prefab minimums.")]
+    public const int maxGenerationAttempts = 25;
     [Header("Debug Settings")]
     [Tooltip("Enables logging")]
     public bool DebugMode = true;
@@ -76,7 +78,7 @@ public class Generator : MonoBehaviour
     public static bool DebugModeStatic;
     public static bool showGizmosStatic;
     
-    void Start() //this is simply used to kickstart generation process if flagged, can be called from anywhere however.
+    void Start()
     {
         if (seed == 0) seed = System.DateTime.Now.Millisecond; 
         rng = new System.Random(seed);
@@ -100,31 +102,54 @@ public class Generator : MonoBehaviour
     public void Generate()
     {
 
-        DebugHolder.Log($"Dungeon generation started (seed={seed}, trueMaxDepth={trueMaxDepth}).");
-
-        createNewDungeonScene();
-        createStartPrefab();
-        try
+        for (int attempt = 1; attempt <= maxGenerationAttempts; attempt++)
         {
-            StartGeneration();
-        }
-        catch (System.Exception e)
-        {
-            DebugHolder.LogError($"Generation failed: {e.Message}");
             ResetGenerator();
-            Generate(); //restart generation if it fails due to hitting true max depth
+            ResetRequiredPrefabsProgress();
+
+            DebugHolder.Log($"Dungeon generation started (seed={seed}, trueMaxDepth={trueMaxDepth}, attempt={attempt}/{maxGenerationAttempts}).");
+
+            createNewDungeonScene();
+            createStartPrefab();
+            try
+            {
+                StartGeneration();
+            }
+            catch (System.Exception e)
+            {
+                DebugHolder.LogError($"Generation failed: {e.Message}");
+                if (attempt < maxGenerationAttempts)
+                {
+                    seed = System.DateTime.Now.Millisecond;
+                    rng = new System.Random(seed);
+                    continue;
+                }
+
+                return;
+            }
+
+            if (!AreRequiredPrefabsMinimumsMet())
+            {
+                DebugHolder.LogWarning("Generation completed without meeting required prefab minimums. Retrying with a new seed.");
+                seed = System.DateTime.Now.Millisecond;
+                rng = new System.Random(seed);
+                continue;
+            }
+
+            if (movePlayerToDungeon) MovePlayerToDungeon();
+
+            LogPostGenerationSummary(attempt);
+
+            if (randomiseSeedAfterGeneration)
+            {
+                seed = System.DateTime.Now.Millisecond;
+                rng = new System.Random(seed);
+            }
+
             return;
         }
 
-        if (movePlayerToDungeon) MovePlayerToDungeon();
-
-
-
-        if (randomiseSeedAfterGeneration)
-        {
-            seed = System.DateTime.Now.Millisecond;
-            rng = new System.Random(seed);
-        }
+        DebugHolder.LogError($"Generation aborted after {maxGenerationAttempts} attempts without satisfying required prefab minimums.");
     }
 
     //Pre-Generation
@@ -159,6 +184,61 @@ public class Generator : MonoBehaviour
         spawnedWallCounter = 0;
         requiredRoomsBiggestDepth = 0;
         isRequiredRoomsMinMet = false;
+    }
+
+    private void ResetRequiredPrefabsProgress()
+    {
+        if (requiredPrefabs == null)
+        {
+            return;
+        }
+
+        foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
+        {
+            required.countreached = 0;
+            required.currentWeight = 0;
+        }
+    }
+
+    private bool AreRequiredPrefabsMinimumsMet()
+    {
+        if (requiredPrefabs == null || requiredPrefabs.Length == 0)
+        {
+            return true;
+        }
+
+        foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
+        {
+            if (required.countreached < required.countMin)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void LogPostGenerationSummary(int attempt)
+    {
+        if (!DebugModeStatic)
+        {
+            return;
+        }
+
+        string requiredSummary = "none";
+        if (requiredPrefabs != null && requiredPrefabs.Length > 0)
+        {
+            List<string> parts = new List<string>();
+            foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
+            {
+                parts.Add($"{required.roomType}:{required.countreached}/{required.countMin}");
+            }
+
+            requiredSummary = string.Join(", ", parts);
+        }
+
+        DebugHolder.Log(
+            $"Post-generation summary: seed={seed}, attempt={attempt}, roomsSpawned={spawnedRoomCounter}, wallsSpawned={spawnedWallCounter}, required=[{requiredSummary}], trueMaxDepth={trueMaxDepth}, depthEqualToEndRoom={depthEqualToEndRoom}.");
     }
 
    //Generation
