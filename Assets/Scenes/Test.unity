@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576fad1459475fbb49f1f7416c7721ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Generator
-  seed: 0
+  seed: 233
   generateOnStart: 1
   movePlayerToDungeon: 1
   randomiseSeedAfterGeneration: 1
@@ -231,6 +231,7 @@ MonoBehaviour:
     countMax: 4
     countreached: 0
     currentWeight: 0
+    afterMinChance: 1
   - roomType: 7
     prefabs:
     - {fileID: 878873056114700188, guid: 4252990f4be6310c2bd102f1bf62bd95, type: 3}
@@ -240,6 +241,7 @@ MonoBehaviour:
     countMax: 1
     countreached: 0
     currentWeight: 0
+    afterMinChance: 1
   maxGenerationAttempts: 25
   randomPrefabs:
   - roomType: 4
@@ -247,6 +249,7 @@ MonoBehaviour:
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 6ebe327c50e7a2731a2c7e7e4ab6c1b7, type: 3}
       weight: 50
+    isUnique: 0
   - roomType: 1
     weight: 40
     prefabs:
@@ -258,6 +261,7 @@ MonoBehaviour:
       weight: 45
     - prefab: {fileID: 878873056114700188, guid: 30eb605c307c18097bb61bd1cb71d3e3, type: 3}
       weight: 40
+    isUnique: 0
   - roomType: 2
     weight: 40
     prefabs:
@@ -267,18 +271,21 @@ MonoBehaviour:
       weight: 50
     - prefab: {fileID: 878873056114700188, guid: 85cbaefb8b42ebaee89ffb9a26c358d6, type: 3}
       weight: 50
+    isUnique: 0
   - roomType: 3
     weight: 5
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 8034397bdeab72c56861ee2e74ed945d, type: 3}
       weight: 50
+    isUnique: 0
   - roomType: 0
     weight: 1
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 321b267c3db09e1828e3508c4442bf58, type: 3}
-      weight: 50
+      weight: 5
     - prefab: {fileID: 878873056114700188, guid: fc2a2319152476b7abec011f41393fe6, type: 3}
       weight: 10
+    isUnique: 0
 --- !u!1001 &1710871870
 PrefabInstance:
   m_ObjectHideFlags: 0

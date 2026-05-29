@@ -412,21 +412,27 @@ public class Generator : MonoBehaviour
         {
             RoomType selectedType = SelectWeightedType(candidateTypes);
             List<GameObject> candidateRooms = GetCandidateRooms(selectedType);
+            if (Cache.GetEntryForType(selectedType).count >= Cache.GetEntryForType(selectedType).limit)
+            {
+                candidateTypes.Remove(selectedType);
+                DebugHolder.Log($"Room type '{selectedType}' has reached its placement limit of {Cache.GetEntryForType(selectedType).limit}. Removing from candidates for exit '{exit.gameObject.name}'.", exit.gameObject);
+                continue;
+            }
 
             while (candidateRooms.Count > 0)
             {
                 GameObject selectedRoomPrefab = SelectWeightedRoom(candidateRooms);
-                if (Cache.GetEntryForType(selectedType).limit > 0 && Cache.GetEntryForType(selectedType).count >= Cache.GetEntryForType(selectedType).limit)
+                if (Cache.GetEntryForRoom(selectedRoomPrefab).count >= Cache.GetEntryForRoom(selectedRoomPrefab).limit)
                 {
-                    DebugHolder.Log($"Skipping room of type '{selectedType}' because it has reached its limit of {Cache.GetEntryForType(selectedType).limit} instances.", exit.gameObject);
                     candidateRooms.Remove(selectedRoomPrefab);
+                    DebugHolder.Log($"Prefab '{selectedRoomPrefab.name}' has reached its placement limit of {Cache.GetEntryForRoom(selectedRoomPrefab).limit}. Removing from candidates for exit '{exit.gameObject.name}'.", exit.gameObject);
                     continue;
                 }
                 Room placedRoom = TryPlaceRoom(selectedRoomPrefab, exit);
                 if (placedRoom != null)
                 {
                     Cache.GetEntryForType(selectedType).count++;
-                    if (typeEntry != null) 
+                    Cache.GetEntryForRoom(selectedRoomPrefab).count++;
                     return placedRoom;
                 }
 

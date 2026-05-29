@@ -50,6 +50,21 @@ public static class Cache
             return null;
         }
     }
+    public static RoomWeights GetEntryForRoom(GameObject room)
+    {
+        if (roomWeightCache.TryGetValue(room, out RoomWeights rw))
+        {
+            return rw;
+        }
+        else
+        {
+            if (warnedMissingRooms.Add(room))
+            {
+                DebugHolder.LogWarning($"Cache miss: prefab '{room.name}' has no RoomWeights entry. Add weight data under its room type in Generator.randomPrefabs.");
+            }
+            return null;
+        }
+    }
 
     public static int GetWeightForType(RoomType type)
     {
