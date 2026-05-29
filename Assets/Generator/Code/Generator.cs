@@ -51,9 +51,6 @@ public class Generator : MonoBehaviour
     [Tooltip("If true, whenever the end room is places, the depth will be capped to its depth value. This should ensure end room generation at the cost of a inconsistent depth.")]
     public bool depthEqualToEndRoom;
 
-    [Tooltip("Number of attempts the generator will retry with a new seed if it fails to meet the required prefab minimums.")]
-    public const int maxGenerationAttempts = 25;
-
     // Debug Settings
     [Header("Debug Settings")]
     [Tooltip("Enables logging")]
@@ -69,6 +66,8 @@ public class Generator : MonoBehaviour
     [Header("Required Room Settings")]
     [Tooltip("The prefabs that will be forced into the dungeon, along with how many min and max instances and at what depth they can start appearing. These will be attempted to be placed before any random rooms are placed.")]
     public RequiredPrefabsTypeEntry[] requiredPrefabs; // The prefabs that NEED to be included along with how many min and max instances
+    [Tooltip("Number of attempts the generator will retry with a new seed if it fails to meet the required prefab minimums.")]
+    public int maxGenerationAttempts = 25;
 
     [Header("Random Room Settings")]
     [Tooltip("The prefabs that can be used in the dungeon, categorized by type and with a weight for random selection. At least one prefab needs to be assigned here for each RoomType that is allowed by the exits.")]
