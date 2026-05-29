@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using System.Collections;
 using System.Collections.Generic;
 
 
@@ -81,6 +82,9 @@ public class Generator : MonoBehaviour
     private GameObject root;
     private int requiredRoomsBiggestDepth = 0;
     private bool isRequiredRoomsMinMet = false;
+    private Scene currentDungeonScene;
+    private const string controlSceneName = "Generator_Control";
+    private bool isGenerating = false;
 
     //static
     public static bool DebugModeStatic;
@@ -109,6 +113,18 @@ public class Generator : MonoBehaviour
 
     public void Generate()
     {
+        if (isGenerating)
+        {
+            if (DebugMode) DebugHolder.LogWarning("Generate() called while generation is already running.");
+            return;
+        }
+
+        StartCoroutine(GenerateCoroutine());
+    }
+
+    private IEnumerator GenerateCoroutine()
+    {
+        isGenerating = true;
 
         for (int attempt = 1; attempt <= maxGenerationAttempts; attempt++)
         {
@@ -117,8 +133,22 @@ public class Generator : MonoBehaviour
 
             DebugHolder.Log($"Dungeon generation started (seed={seed}, trueMaxDepth={trueMaxDepth}, attempt={attempt}/{maxGenerationAttempts}).");
 
+            // If a previous dungeon scene exists, move this generator to control scene and unload it asynchronously (yield until done)
+            if (currentDungeonScene.IsValid())
+            {
+                Scene control = GetOrCreateControlScene();
+                SceneManager.MoveGameObjectToScene(this.gameObject, control);
+                AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(currentDungeonScene);
+                if (unloadOp != null)
+                {
+                    yield return unloadOp;
+                }
+                currentDungeonScene = default;
+            }
+
             createNewDungeonScene();
             createStartPrefab();
+            bool failed = false;
             try
             {
                 StartGeneration();
@@ -126,6 +156,11 @@ public class Generator : MonoBehaviour
             catch (System.Exception e)
             {
                 DebugHolder.LogError($"Generation failed: {e.Message}");
+                failed = true;
+            }
+
+            if (failed)
+            {
                 if (attempt < maxGenerationAttempts)
                 {
                     seed = System.DateTime.Now.Millisecond;
@@ -133,7 +168,8 @@ public class Generator : MonoBehaviour
                     continue;
                 }
 
-                return;
+                isGenerating = false;
+                yield break;
             }
 
             if (!AreRequiredPrefabsMinimumsMet())
@@ -154,10 +190,12 @@ public class Generator : MonoBehaviour
                 rng = new System.Random(seed);
             }
 
-            return;
+            isGenerating = false;
+            yield break;
         }
 
         DebugHolder.LogError($"Generation aborted after {maxGenerationAttempts} attempts without satisfying required prefab minimums.");
+        isGenerating = false;
     }
 
     //Pre-Generation
@@ -165,8 +203,19 @@ public class Generator : MonoBehaviour
     {
         //create scene, move to it, set as active
         Scene newScene = SceneManager.CreateScene("Dungeon_" + dungeonCounter++);
+        currentDungeonScene = newScene;
         SceneManager.MoveGameObjectToScene(this.gameObject, newScene);
         SceneManager.SetActiveScene(newScene);
+    }
+
+    private Scene GetOrCreateControlScene()
+    {
+        Scene control = SceneManager.GetSceneByName(controlSceneName);
+        if (!control.IsValid())
+        {
+            control = SceneManager.CreateScene(controlSceneName);
+        }
+        return control;
     }
 
     private void createStartPrefab(Vector3 position = default, Quaternion rotation = default)
@@ -300,7 +349,7 @@ public class Generator : MonoBehaviour
                                 //Linear curve the weight upwards depending on what depth is and what the range is
                                 required.currentWeight = (int)(((float)(currentRoom.GetDepth() - required.depthMin) / (required.depthMax - required.depthMin)) * 100);
                                 DebugHolder.Log($"Calculated weight for required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}': {required.currentWeight} (depthMin={required.depthMin}, depthMax={required.depthMax}).", exit.gameObject);
-                                if (required.countreached > required.countMin) {required.currentWeight = 10;}
+                                if (required.countreached > required.countMin) {required.currentWeight = required.afterMinChance;}
                                 if (rng.Next(0, 100) <= required.currentWeight) //Chance to place depending on how close to max depth we are in the range
                                 {
                                     DebugHolder.Log($"Attempting to place required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}' with weight {required.currentWeight}.", exit.gameObject);
