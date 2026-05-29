@@ -27,6 +27,30 @@ public static class Cache
         }
     }
 
+    public static void ClearCache()
+    {
+        roomTypeCache = null;
+        roomWeightCache = null;
+        warnedMissingTypes = null;
+        warnedMissingRooms = null;
+    }
+
+    public static RandomPrefabsTypeEntry GetEntryForType(RoomType type)
+    {
+        if (roomTypeCache.TryGetValue(type, out RandomPrefabsTypeEntry entry))
+        {
+            return entry;
+        }
+        else
+        {
+            if (warnedMissingTypes.Add(type))
+            {
+                DebugHolder.LogWarning($"Cache miss: room type '{type}' has no RandomPrefabsTypeEntry. Add it to Generator.randomPrefabs or remove it from exit allowed types.");
+            }
+            return null;
+        }
+    }
+
     public static int GetWeightForType(RoomType type)
     {
         if (roomTypeCache.TryGetValue(type, out RandomPrefabsTypeEntry entry))

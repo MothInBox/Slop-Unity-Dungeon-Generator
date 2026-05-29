@@ -416,9 +416,17 @@ public class Generator : MonoBehaviour
             while (candidateRooms.Count > 0)
             {
                 GameObject selectedRoomPrefab = SelectWeightedRoom(candidateRooms);
+                if (Cache.GetEntryForType(selectedType).limit > 0 && Cache.GetEntryForType(selectedType).count >= Cache.GetEntryForType(selectedType).limit)
+                {
+                    DebugHolder.Log($"Skipping room of type '{selectedType}' because it has reached its limit of {Cache.GetEntryForType(selectedType).limit} instances.", exit.gameObject);
+                    candidateRooms.Remove(selectedRoomPrefab);
+                    continue;
+                }
                 Room placedRoom = TryPlaceRoom(selectedRoomPrefab, exit);
                 if (placedRoom != null)
                 {
+                    Cache.GetEntryForType(selectedType).count++;
+                    if (typeEntry != null) 
                     return placedRoom;
                 }
 
