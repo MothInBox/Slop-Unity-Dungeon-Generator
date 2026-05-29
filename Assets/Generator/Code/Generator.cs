@@ -36,36 +36,45 @@ using System.Collections.Generic;
 
 public class Generator : MonoBehaviour
 {
-    //public
+    // Generation Settings
     [Header("Generation Settings")]
     [Tooltip("Set seed to generate, if 0 then it will generate a seed before starting.")]
     public int seed = 0;
-    [Tooltip("If true, the generator will randomise the seed after generation.")]
-    public bool randomiseSeedAfterGeneration = true;
-    [Tooltip("If true, the player will be moved to the dungeon entrance after generation. The player must have the tag 'Player' for this to work.")]
-    public bool movePlayerToDungeon = true;
     [Tooltip("Generate the dungeon when the script is loaded.")]
     public bool generateOnStart = true;
+    [Tooltip("If true, the player will be moved to the dungeon entrance after generation. The player must have the tag 'Player' for this to work.")]
+    public bool movePlayerToDungeon = true;
+    [Tooltip("If true, the generator will randomise the seed after generation.")]
+    public bool randomiseSeedAfterGeneration = true;
     [Tooltip("The maximum depth, this is a HARD limit and will immediently stop generation if reached. Reccomended to give this a high value this with depthEqualToEndRoom.")]
     public int trueMaxDepth = 255;
     [Tooltip("If true, whenever the end room is places, the depth will be capped to its depth value. This should ensure end room generation at the cost of a inconsistent depth.")]
     public bool depthEqualToEndRoom;
+
     [Tooltip("Number of attempts the generator will retry with a new seed if it fails to meet the required prefab minimums.")]
     public const int maxGenerationAttempts = 25;
+
+    // Debug Settings
     [Header("Debug Settings")]
     [Tooltip("Enables logging")]
     public bool DebugMode = true;
     [Tooltip("Will hide room gizmos if false. (showing connections)")]
     public bool showGizmos = true;
+
+    // Prefab Settings
     [Header("Prefab Settings")]
     [Tooltip("The root prefab to begin generation from. It is recommended to use a new room with atleast 1 exit and 1 enter node (as the spawn node for player)")]
     public GameObject startPrefab; // This is the first prefab, it will be used to start the generation as the "root"
+
+    [Header("Required Room Settings")]
     [Tooltip("The prefabs that will be forced into the dungeon, along with how many min and max instances and at what depth they can start appearing. These will be attempted to be placed before any random rooms are placed.")]
     public RequiredPrefabsTypeEntry[] requiredPrefabs; // The prefabs that NEED to be included along with how many min and max instances
+
+    [Header("Random Room Settings")]
     [Tooltip("The prefabs that can be used in the dungeon, categorized by type and with a weight for random selection. At least one prefab needs to be assigned here for each RoomType that is allowed by the exits.")]
     public RandomPrefabsTypeEntry[] randomPrefabs; // The prefabs that can be included, along with their weight for random selection
 
-    //private
+    // Private state
     private System.Random rng; //no Unity random as it is static
     private int dungeonCounter = 0;
     private int spawnedRoomCounter = 0;
