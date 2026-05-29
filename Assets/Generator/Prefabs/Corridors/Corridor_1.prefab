@@ -375,7 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Exit
   allowedWallPrefabs:
   - {fileID: 7969703794459610400, guid: 213be9ad7a9de5a3da84e0c18bc7a6d9, type: 3}
-  allowedTypePrefabs: 040000000100000002000000
+  allowedTypePrefabs: 04000000010000000200000000000000
   isConnected: 0
 --- !u!1 &7262827711121358051
 GameObject:

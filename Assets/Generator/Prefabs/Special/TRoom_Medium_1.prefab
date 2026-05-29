@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14c81ac2d771ba2e280e7e79d16550c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
-  roomType: 1
+  roomType: 6
   entranceNode: {fileID: 2306731204234441390}
   exitNodes:
   - {fileID: 7628153304354207407}

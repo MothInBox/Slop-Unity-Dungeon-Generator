@@ -644,7 +644,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Exit
   allowedWallPrefabs:
   - {fileID: 7969703794459610400, guid: 4979a54561032bd7bb94deecc5db1c84, type: 3}
-  allowedTypePrefabs: 040000000100000002000000
+  allowedTypePrefabs: 04000000010000000200000000000000
   isConnected: 0
 --- !u!1 &2905904067468793164
 GameObject:
@@ -1632,7 +1632,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Exit
   allowedWallPrefabs:
   - {fileID: 7969703794459610400, guid: 4979a54561032bd7bb94deecc5db1c84, type: 3}
-  allowedTypePrefabs: 040000000100000002000000
+  allowedTypePrefabs: 04000000010000000200000000000000
   isConnected: 0
 --- !u!1 &6585065669640328238
 GameObject:
@@ -1906,7 +1906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Exit
   allowedWallPrefabs:
   - {fileID: 7969703794459610400, guid: 4979a54561032bd7bb94deecc5db1c84, type: 3}
-  allowedTypePrefabs: 040000000100000002000000
+  allowedTypePrefabs: 04000000010000000200000000000000
   isConnected: 0
 --- !u!1 &7212642160108977956
 GameObject:
