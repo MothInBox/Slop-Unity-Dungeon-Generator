@@ -40,7 +40,7 @@ public class Generator : MonoBehaviour
     [Header("Generation Settings")]
     [Tooltip("Set seed to generate, if 0 then it will generate a seed before starting.")]
     public int seed = 0;
-    [Tooltip("If true, the generator will create a new scene for each generated dungeon. If false, it will generate in the current scene and may cause issues with existing objects. Always set to false if you want to generate multiple dungeons in the same scene.")]
+    [Tooltip("If true, the generator will randomise the seed after generation.")]
     public bool randomiseSeedAfterGeneration = true;
     [Tooltip("If true, the player will be moved to the dungeon entrance after generation. The player must have the tag 'Player' for this to work.")]
     public bool movePlayerToDungeon = true;
@@ -51,10 +51,10 @@ public class Generator : MonoBehaviour
     [Tooltip("If true, whenever the end room is places, the depth will be capped to its depth value. This should ensure end room generation at the cost of a inconsistent depth.")]
     public bool depthEqualToEndRoom;
     [Header("Debug Settings")]
-    public bool DebugMode = true;
     [Tooltip("Enables logging")]
-    public bool showGizmos = true;
+    public bool DebugMode = true;
     [Tooltip("Will hide room gizmos if false. (showing connections)")]
+    public bool showGizmos = true;
     [Header("Prefab Settings")]
     [Tooltip("The root prefab to begin generation from. It is recommended to use a new room with atleast 1 exit and 1 enter node (as the spawn node for player)")]
     public GameObject startPrefab; // This is the first prefab, it will be used to start the generation as the "root"
@@ -82,7 +82,14 @@ public class Generator : MonoBehaviour
         rng = new System.Random(seed);
         DebugModeStatic = DebugMode;
         showGizmosStatic = showGizmos;
-        Cache.BuildCache(randomPrefabs);
+        if (randomPrefabs != null)
+        {
+            Cache.BuildCache(randomPrefabs);
+        }
+        else
+        {
+            DebugHolder.LogWarning("Generator startup: 'randomPrefabs' is not set. No random room types available.");
+        }
         if (DebugModeStatic){ ProblemCheck(); }
         if (generateOnStart)
         {
@@ -188,53 +195,60 @@ public class Generator : MonoBehaviour
                 if (!exit.GetIsConnected() || exit.GetIsDeadEnd())
                 {
                     //Forced Rooms
-                    foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
+                    if (requiredPrefabs != null)
                     {
-                        DebugHolder.Log($"Evaluating required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}'. Current count: {required.countreached}/{required.countMax}.", exit.gameObject);
-                        if (required.countreached >= required.countMax) continue;
-                        DebugHolder.Log($"Processing required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}'. Current count: {required.countreached}/{required.countMax}.", exit.gameObject);
-                        if (required.depthMax <= currentRoom.GetDepth() && required.countreached < required.countMin)
+                        foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
                         {
-                            DebugHolder.Log($"Force placing required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}' because count {required.countreached} has not reached minimum {required.countMin} and depth is at or past max {required.depthMax}.", exit.gameObject);
-                            TryPlaceRoom(required.prefabs[0], exit); //Attempt to force the room if at Max Depth or past it if all else fails.
-                        }
-                        if (required.depthMin <= currentRoom.GetDepth())
-                        {
-                            //Linear curve the weight upwards depending on what depth is and what the range is
-                            required.currentWeight = (int)(((float)(currentRoom.GetDepth() - required.depthMin) / (required.depthMax - required.depthMin)) * 100);
-                            DebugHolder.Log($"Calculated weight for required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}': {required.currentWeight} (depthMin={required.depthMin}, depthMax={required.depthMax}).", exit.gameObject);
-                            if (required.countreached > required.countMin) {required.currentWeight = 10;}
-                            if (rng.Next(0, 100) <= required.currentWeight) //Chance to place depending on how close to max depth we are in the range
+                            DebugHolder.Log($"Evaluating required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}'. Current count: {required.countreached}/{required.countMax}.", exit.gameObject);
+                            if (required.countreached >= required.countMax) continue;
+                            DebugHolder.Log($"Processing required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}'. Current count: {required.countreached}/{required.countMax}.", exit.gameObject);
+                            if (required.depthMax <= currentRoom.GetDepth() && required.countreached < required.countMin)
                             {
-                                DebugHolder.Log($"Attempting to place required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}' with weight {required.currentWeight}.", exit.gameObject);
-                                if (newRoom == null)
+                                DebugHolder.Log($"Force placing required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}' because count {required.countreached} has not reached minimum {required.countMin} and depth is at or past max {required.depthMax}.", exit.gameObject);
+                                TryPlaceRoom(required.prefabs[0], exit); //Attempt to force the room if at Max Depth or past it if all else fails.
+                            }
+                            if (required.depthMin <= currentRoom.GetDepth())
+                            {
+                                //Linear curve the weight upwards depending on what depth is and what the range is
+                                required.currentWeight = (int)(((float)(currentRoom.GetDepth() - required.depthMin) / (required.depthMax - required.depthMin)) * 100);
+                                DebugHolder.Log($"Calculated weight for required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}': {required.currentWeight} (depthMin={required.depthMin}, depthMax={required.depthMax}).", exit.gameObject);
+                                if (required.countreached > required.countMin) {required.currentWeight = 10;}
+                                if (rng.Next(0, 100) <= required.currentWeight) //Chance to place depending on how close to max depth we are in the range
                                 {
-                                    newRoom = TryPlaceRoom(required.prefabs[0], exit);
-                                }
-                                if (newRoom != null)
-                                {
-                                    requiredRoomsBiggestDepth = Mathf.Max(requiredRoomsBiggestDepth, currentRoom.GetDepth() + 1);
-                                    required.countreached++;
-                                    continue; //if we successfully placed a required room, skip to next exit
-                                }
-                                else
-                                {
-                                    DebugHolder.Log($"Failed to place required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}'.", exit.gameObject);
+                                    DebugHolder.Log($"Attempting to place required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}' with weight {required.currentWeight}.", exit.gameObject);
+                                    if (newRoom == null)
+                                    {
+                                        newRoom = TryPlaceRoom(required.prefabs[0], exit);
+                                    }
+                                    if (newRoom != null)
+                                    {
+                                        requiredRoomsBiggestDepth = Mathf.Max(requiredRoomsBiggestDepth, currentRoom.GetDepth() + 1);
+                                        required.countreached++;
+                                        continue; //if we successfully placed a required room, skip to next exit
+                                    }
+                                    else
+                                    {
+                                        DebugHolder.Log($"Failed to place required room of type '{required.roomType}' at depth {currentRoom.GetDepth()} on exit '{exit.gameObject.name}'.", exit.gameObject);
+                                    }
                                 }
                             }
                         }
                     }
-                    foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
+
+                    if (requiredPrefabs != null)
                     {
-                        if (required.countreached < required.countMin)
+                        foreach (RequiredPrefabsTypeEntry required in requiredPrefabs)
                         {
-                            DebugHolder.Log($"Failed to meet minimum count for required room of type '{required.roomType}' at depth {currentRoom.GetDepth()}. Current count: {required.countreached}/{required.countMin}.", currentRoom.gameObject);
-                            isRequiredRoomsMinMet = false;
-                            break;
-                        }
-                        else
-                        {
-                            isRequiredRoomsMinMet = true;
+                            if (required.countreached < required.countMin)
+                            {
+                                DebugHolder.Log($"Failed to meet minimum count for required room of type '{required.roomType}' at depth {currentRoom.GetDepth()}. Current count: {required.countreached}/{required.countMin}.", currentRoom.gameObject);
+                                isRequiredRoomsMinMet = false;
+                                break;
+                            }
+                            else
+                            {
+                                isRequiredRoomsMinMet = true;
+                            }
                         }
                     }
                     if (newRoom == null)
@@ -452,7 +466,8 @@ public class Generator : MonoBehaviour
         
         Quaternion rotationDelta = Quaternion.FromToRotation(connectionSpot.transform.forward, wall.transform.forward);
         wall.transform.rotation = rotationDelta * wall.transform.rotation;
-        wall.transform.position += wall.transform.position - connectionSpot.transform.position;
+        // Move the wall so that its 'connectionSpot' aligns with the exit position
+        wall.transform.position += exit.transform.position - connectionSpot.transform.position;
 
         exit.SetDeadEnd(true);
         if (DebugModeStatic)
@@ -497,16 +512,22 @@ public class Generator : MonoBehaviour
     private void MovePlayerToDungeon()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null && root != null)
-        {
-            player.transform.position = root.GetComponent<Room>().getEnterNode().transform.position + Vector3.up * 2.5f; // Move player slightly above the floor to avoid falling through
-            player.transform.rotation = root.GetComponent<Room>().getEnterNode().transform.rotation;
-
-        }
-        else
+        if (player == null || root == null)
         {
             DebugHolder.LogWarning("MovePlayerToDungeon skipped: missing Player (tag='Player') or generated start room root.");
+            return;
         }
+
+        Room startRoom = root.GetComponent<Room>();
+        if (startRoom == null || startRoom.getEnterNode() == null)
+        {
+            DebugHolder.LogWarning("MovePlayerToDungeon skipped: generated root room is missing a Room component or enter node.");
+            return;
+        }
+
+        var enterNode = startRoom.getEnterNode();
+        player.transform.position = enterNode.transform.position + Vector3.up * 2.5f; // Move player slightly above the floor to avoid falling through
+        player.transform.rotation = enterNode.transform.rotation;
     }
     private bool checkOverlap(Room newRoom, Exit ignoreExit)
     {

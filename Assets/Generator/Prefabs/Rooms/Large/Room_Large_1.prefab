@@ -2306,6 +2306,7 @@ GameObject:
   - component: {fileID: 5643905251567486541}
   - component: {fileID: 9044599530708667865}
   - component: {fileID: 5561271494547753374}
+  - component: {fileID: 4254611564284773927}
   m_Layer: 0
   m_Name: Room_Large_1
   m_TagString: Untagged
@@ -2369,6 +2370,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 5, z: 10}
   m_Center: {x: 0, y: 2.5, z: 0}
+--- !u!65 &4254611564284773927
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878873056114700188}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 21, y: 5, z: 10}
+  m_Center: {x: 0, y: 2.5, z: 10}
 --- !u!1 &961512774991791124
 GameObject:
   m_ObjectHideFlags: 0
