@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 
 /* <summary>
-    @author: MonkeInBOX
+    @author: MothInBOX
     @Tutorial:
         * Rooms will need a Enter and Exit node, depending on if you can Enter or Exit in that room. 
         * These will connect together to create the dungeon layout.
