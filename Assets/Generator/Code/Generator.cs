@@ -412,7 +412,7 @@ public class Generator : MonoBehaviour
         {
             RoomType selectedType = SelectWeightedType(candidateTypes);
             List<GameObject> candidateRooms = GetCandidateRooms(selectedType);
-            if (Cache.GetEntryForType(selectedType).count >= Cache.GetEntryForType(selectedType).limit)
+            if (Cache.GetEntryForType(selectedType).limit > 0 && Cache.GetEntryForType(selectedType).count >= Cache.GetEntryForType(selectedType).limit)
             {
                 candidateTypes.Remove(selectedType);
                 DebugHolder.Log($"Room type '{selectedType}' has reached its placement limit of {Cache.GetEntryForType(selectedType).limit}. Removing from candidates for exit '{exit.gameObject.name}'.", exit.gameObject);
@@ -422,7 +422,7 @@ public class Generator : MonoBehaviour
             while (candidateRooms.Count > 0)
             {
                 GameObject selectedRoomPrefab = SelectWeightedRoom(candidateRooms);
-                if (Cache.GetEntryForRoom(selectedRoomPrefab).count >= Cache.GetEntryForRoom(selectedRoomPrefab).limit)
+                if (Cache.GetEntryForRoom(selectedRoomPrefab).limit > 0 && Cache.GetEntryForRoom(selectedRoomPrefab).count >= Cache.GetEntryForRoom(selectedRoomPrefab).limit)
                 {
                     candidateRooms.Remove(selectedRoomPrefab);
                     DebugHolder.Log($"Prefab '{selectedRoomPrefab.name}' has reached its placement limit of {Cache.GetEntryForRoom(selectedRoomPrefab).limit}. Removing from candidates for exit '{exit.gameObject.name}'.", exit.gameObject);

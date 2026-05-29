@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576fad1459475fbb49f1f7416c7721ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Generator
-  seed: 233
+  seed: 0
   generateOnStart: 1
   movePlayerToDungeon: 1
   randomiseSeedAfterGeneration: 1
@@ -249,43 +249,74 @@ MonoBehaviour:
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 6ebe327c50e7a2731a2c7e7e4ab6c1b7, type: 3}
       weight: 50
-    isUnique: 0
+      limit: 0
+      count: 0
+    limit: 0
+    count: 0
   - roomType: 1
     weight: 40
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 7714d78f8765f03ef9c939baf529079a, type: 3}
       weight: 50
+      limit: 0
+      count: 0
     - prefab: {fileID: 878873056114700188, guid: 1865978cbfe87087cbfb91c860410812, type: 3}
       weight: 45
+      limit: 0
+      count: 0
     - prefab: {fileID: 878873056114700188, guid: a2c4d51f3c2ef4a81b82f035286da00a, type: 3}
       weight: 45
+      limit: 0
+      count: 0
     - prefab: {fileID: 878873056114700188, guid: 30eb605c307c18097bb61bd1cb71d3e3, type: 3}
       weight: 40
-    isUnique: 0
+      limit: 0
+      count: 0
+    limit: 0
+    count: 0
   - roomType: 2
     weight: 40
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 6aca7d0ac77a78200a9d272e8b37525c, type: 3}
       weight: 50
+      limit: 0
+      count: 0
     - prefab: {fileID: 878873056114700188, guid: abf22139eb46047bb9a59aeb12f60520, type: 3}
       weight: 50
+      limit: 0
+      count: 0
     - prefab: {fileID: 878873056114700188, guid: 85cbaefb8b42ebaee89ffb9a26c358d6, type: 3}
       weight: 50
-    isUnique: 0
+      limit: 0
+      count: 0
+    limit: 0
+    count: 0
   - roomType: 3
     weight: 5
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 8034397bdeab72c56861ee2e74ed945d, type: 3}
       weight: 50
-    isUnique: 0
+      limit: 0
+      count: 0
+    - prefab: {fileID: 878873056114700188, guid: df3b92c2afa4e1d7ca4ce61e9a80b347, type: 3}
+      weight: 50
+      limit: 0
+      count: 0
+    limit: 0
+    count: 0
   - roomType: 0
-    weight: 1
+    weight: 5
     prefabs:
     - prefab: {fileID: 878873056114700188, guid: 321b267c3db09e1828e3508c4442bf58, type: 3}
       weight: 5
+      limit: 1
+      count: 0
     - prefab: {fileID: 878873056114700188, guid: fc2a2319152476b7abec011f41393fe6, type: 3}
       weight: 10
-    isUnique: 0
+      limit: 1
+      count: 0
+    limit: 2
+    count: 0
 --- !u!1001 &1710871870
 PrefabInstance:
   m_ObjectHideFlags: 0
