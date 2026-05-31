@@ -1,7 +1,9 @@
 
 #  Slop-Unity-Dungeon-Generator
 
-A dungeon generator for unity, shouldnt be overly difficult to use and i tried to make it easily integratable into anything. It stiches prefabs together, given a variety of params; depth, required rooms, seed and your list of prefabs.
+A gridless dungeon generator for unity, shouldnt be overly difficult to use and i tried to make it easily integratable into anything. It stiches prefabs together via enterance and exits, given a variety of params; depth, required rooms, seed and your list of prefabs.
+
+
 
 
 How to use:
