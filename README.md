@@ -15,6 +15,7 @@ The generator will create a new scene for the dungeon.
 
 ## How does it work?
 The foundation of the system works in a very simple manner. Start with a room and branch out through all of its exits nodes (adding them to a queue to be processed). Deque next exit and Weight room types then rooms and attempt to place the random rooms enterance node on the current exit node, if there is overlap try something else, if there are no possible rooms, wall the exit, finally Que all created exits.
+There are of course, other edge cases such as creating a wall when max depth has been reached and some settings like capping depth at the end room.
 
 This creates the basis of the procedural generation, but I wanted to be able to include rooms that MUST be generated. This uses a linear curve over the depth it is supposed to spawn, meaning as we approach the max depth the chance of spawning is higher. If we dont have the rooms at the end, generation must be re-done, this will happen over 25 possible attempts by default (configurable) but with my setup, I havent seen it go past 1 retry.
 
