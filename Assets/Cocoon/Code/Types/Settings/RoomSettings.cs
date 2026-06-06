@@ -12,9 +12,17 @@ public class RoomSettings
     {
         return startRoomPrefabs;
     }
+    public GameObject getStartRoomPrefab(long seed)
+    {
+        return CocoonUtility.GetRandomElement(startRoomPrefabs, seed);
+    }
     public GameObject[] getEndRoomPrefabs()
     {
         return endRoomPrefabs;
+    }
+    public GameObject getEndRoomPrefab(long seed)
+    {
+        return CocoonUtility.GetRandomElement(endRoomPrefabs, seed);
     }
     public RoomTypeEntry[] getRandomRoomEntries()
     {

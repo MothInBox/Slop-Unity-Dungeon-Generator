@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public static class CocoonUtility
 {
@@ -15,6 +16,11 @@ public static class CocoonUtility
         return ((long)random.Next() << 32) | (long)random.Next(); // Combine two random integers to create a new long seed
     }
 
+    public static Scene createScene(string sceneName)
+    {
+        return SceneManager.CreateScene(sceneName);
+    }
+
     public static int Randomize(long seed)
     {
         if (seed == 0)
@@ -25,12 +31,27 @@ public static class CocoonUtility
         return random.Next();
     }
 
-    public static void placeRoom(GameObject roomPrefab, Vector3 position, Quaternion rotation)
+    public static Room placeRoom(GameObject roomPrefab, Vector3 position, Quaternion rotation)
     {
-        GameObject.Instantiate(roomPrefab, position, rotation);
+        return GameObject.Instantiate(roomPrefab, position, rotation).GetComponent<Room>();
     }
     public static void DestroyRoom(GameObject room)
     {
         GameObject.Destroy(room);
+    }
+
+    public static T GetRandomElement<T>(T[] array, long seed)
+    {
+        try {
+            if (array == null || array.Length == 0)
+            {
+                throw new ArgumentException("Start Prefab Array is null or empty.");
+            }
+            return array[Randomize(seed) % array.Length];
+        } catch (Exception ex)
+        {
+            CocoonLogger.LogException(ex);
+            return default(T);
+        }
     }
 }

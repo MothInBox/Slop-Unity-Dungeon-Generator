@@ -5,6 +5,7 @@ public class CocoonLogger : MonoBehaviour
     [SerializeField]public bool enableInfo = false; //enable for logging.
     [SerializeField]public bool enableWarning = false; //enable for logging.
     [SerializeField]public bool enableError = false; //enable for logging.
+    [SerializeField]public bool enableGizmos = false; //enable for logging.
 
     private static CocoonLogger current;
 
@@ -14,9 +15,9 @@ public class CocoonLogger : MonoBehaviour
             Debug.LogWarning("Multiple instances of CocoonLogger detected. Only one instance should be active at a time.");
             return;
         }
-        if (enableInfo || enableWarning || enableError)
+        if (enableInfo || enableWarning || enableError || enableGizmos)
         {
-            LogInfo("Cocoon Logger Initialized. Enable Info: " + enableInfo + " | Enable Warning: " + enableWarning + " | Enable Error: " + enableError);
+            LogInfo("Cocoon Logger Initialized. Enable Info: " + enableInfo + " | Enable Warning: " + enableWarning + " | Enable Error: " + enableError + " | Enable Gizmos: " + enableGizmos);
             current = this;
         }
     }
@@ -45,12 +46,17 @@ public class CocoonLogger : MonoBehaviour
         }
     }
 
-    public static void LogException(string message, System.Exception ex)
+    public static void LogException(System.Exception ex)
     {
         if (current != null && current.enableError)
         {
-            current.LogExceptionInternal(message, ex);
+            current.LogExceptionInternal(ex);
         }
+    }
+    
+    public static bool doDrawGizmos()
+    {
+        return current != null ? current.enableGizmos : false;
     }
 
     private void LogInfoInternal(string message)
@@ -68,8 +74,9 @@ public class CocoonLogger : MonoBehaviour
         Debug.LogError("[Cocoon Debug] :  " + message);
     }
 
-    private void LogExceptionInternal(string message, System.Exception ex)
+    private void LogExceptionInternal(System.Exception ex)
     {
-        Debug.LogError("[Cocoon Debug] : " + message + " | Exception: " + ex.Message);
+        Debug.LogError("[Cocoon Debug] : Exception: " + ex.Message + "\nStack Trace: " + ex.StackTrace);
     }
+
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6659588564013350367}
   - component: {fileID: 88883736232317861}
   m_Layer: 0
-  m_Name: TemplateRoom
+  m_Name: startroom1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -243,7 +243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6047067319113635929, guid: 59a60fd7d57af6b78bb38f5f2249906e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 6047067319113635929, guid: 59a60fd7d57af6b78bb38f5f2249906e, type: 3}
       propertyPath: m_LocalRotation.w
