@@ -26,9 +26,8 @@ public class Cocoon : MonoBehaviour
     {
         if (generateOnStart)
         {
-            Generate();
         }
     }
 
-    
+
 }
