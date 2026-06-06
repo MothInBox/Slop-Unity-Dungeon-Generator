@@ -56,7 +56,7 @@ public class Exit : MonoBehaviour
     {
         if (entryNode.GetEntryType() == EntryType.Spawn)
         {
-            CocoonLogger.LogWarning("Attempting to connect to a spawn entry. This should not happen. Ignoring.");
+            CocoonLogger.LogWarning("Attempting to connect to a spawn entry. This should not happen. Ignoring.", 1);
             return;
         }
         if (isConnected){return;}
