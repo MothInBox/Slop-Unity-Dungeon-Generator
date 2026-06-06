@@ -3,26 +3,41 @@ using UnityEngine;
 [System.Serializable]
 public class RoomGroupingEntry
 {
-    [SerializeField] public RoomPrefabsEntry[] roomPrefabsEntry;
-    [SerializeField][Range(0, 255)] public byte GroupLimit;
+    [Tooltip("The prefabs belonging to this grouping. The GroupWeight is calculated by combining the weights of all prefabs in this grouping. Ensure all grouped prefabs have the same Collision size and take into account the orientation after being placed (Entry node placement).")]
+    [SerializeField] private RoomPrefabsEntry[] roomPrefabsEntry;
+    [Tooltip("The maximum number of rooms that can be placed from this grouping.")]
+    [SerializeField][Range(0, 255)] private byte groupLimit;
 
 
 
-    private int GroupWeight; // Get combined weights of all room prefabs in this grouping. Should not be set manually. 
+    private int groupWeight; // Get combined weights of all room prefabs in this grouping. Should not be set manually. 
 
-    private void calculateGroupWeight()
+    private void calculateWeight()
     {
-        if (GroupWeight != 0) return; // If GroupWeight has already been calculated, skip the calculation.
-        GroupWeight = 0;
+        if (groupWeight != 0) return; // If groupWeight has already been calculated, skip the calculation.
+        groupWeight = 0;
         foreach (RoomPrefabsEntry entry in roomPrefabsEntry)
         {
-            GroupWeight += entry.RoomWeight;
+            groupWeight += entry.getWeight();
         }
     }
-    public int GetGroupWeight()
+    public int getWeight()
     {
-        calculateGroupWeight();
-        CocoonLogger.LogInfo("RoomGroupingEntry GroupWeight: " + GroupWeight);
-        return GroupWeight;
+        calculateWeight();
+        CocoonLogger.LogInfo("RoomGroupingEntry GroupWeight: " + groupWeight);
+        return groupWeight;
+    }
+    public byte getLimit()
+    {
+        return groupLimit;
+    }
+    public RoomPrefabsEntry[] getRoomPrefabsEntry()
+    {
+        return roomPrefabsEntry;
+    }
+    public RoomGroupingEntry(RoomPrefabsEntry[] prefabsEntry, byte limit)
+    {
+        roomPrefabsEntry = prefabsEntry;
+        groupLimit = limit;
     }
 }
