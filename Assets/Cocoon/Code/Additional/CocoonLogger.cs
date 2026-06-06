@@ -16,7 +16,7 @@ public class CocoonLogger : MonoBehaviour
             return;
         }
         current = this;
-        if (enableInfoLevel || enableWarningLevel || enableErrorLevel || enableGizmos)
+        if (enableInfoLevel > 0 || enableWarningLevel > 0 || enableErrorLevel > 0 || enableGizmos)
         {
             LogInfo("Cocoon Logger Initialized. Enable Info: " + enableInfoLevel + " | Enable Warning: " + enableWarningLevel + " | Enable Error: " + enableErrorLevel + " | Enable Gizmos: " + enableGizmos, 1);
         }
