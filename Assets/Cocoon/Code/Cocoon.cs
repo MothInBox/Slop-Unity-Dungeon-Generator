@@ -21,12 +21,26 @@ public class Cocoon : MonoBehaviour
     [Tooltip("Moves player to start room and scene after generation")]
     [SerializeField]public bool movePlayerToStartRoom = true;
 
+    private CocoonCache cache;
 
     void Start()
     {
+        //Async dungeon generation
         if (generateOnStart)
         {
+            Generate();
         }
+    }
+
+
+    private void Generate()
+    {
+        if (seed == 0)
+        {
+            seed = CocoonUtility.RandomizeSeed(seed);
+            CocoonLogger.LogInfo("Generating random seed.");
+        }
+        CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed);
     }
 
 
