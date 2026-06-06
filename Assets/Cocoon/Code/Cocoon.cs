@@ -29,6 +29,9 @@ public class Cocoon : MonoBehaviour
     private Room startRoom;
     private Room endRoom;
     private bool isGenerating;
+    private Room currentRoom;
+    private Exit currentExit;
+    private Queue GenerationQueue; 
 
     void Start()
     {
@@ -123,6 +126,21 @@ public class Cocoon : MonoBehaviour
         }
     }
 
+    private GameObject getRandomRoomThatFits(Exit exit)
+    {
+            // roomSettings -> 
+            // RandomRoomEntries/RoomTypeEntry | Get list of all allowed types on exit, add allowed to cache, then use weights to pick one, remove it and try find a room that fits ->
+            // roomGroupingsEntry | Add available to cache, Weight and pick a room grouping - remove picked ->
+            // roomPrefabsEntry | Weight and pick a room prefab, if it dosent fit try another group, if no groups fit try another type, repeat until out of options.
+        try
+        {
+
+        } catch (System.Exception ex)
+        {
+
+        }
+    }
+
     private IEnumerator GenerateRoutine()
     {
         if (isGenerating)
@@ -156,19 +174,32 @@ public class Cocoon : MonoBehaviour
 
         yield return null;
 
+        currentRoom = startRoom;
+        
+
         //INITIAL GENERATION DONE
 
-        while (true) //main generation loop
-        {
-            
+        while (true){ //main generation loop
+            GenerationQueue = CocoonUtility.AddExitsToQueue(currentRoom, GenerationQueue);
+            if (GenerationQueue.Count == 0) //if no exits, we are done.
+            {
+                CocoonLogger.LogInfo("Generation complete. No more exits to process.", 2, "Cocoon", "Generation");
+                break;
+            }
+            currentExit = (Exit)GenerationQueue.Dequeue();
+            if (currentExit.IsConnected()){CocoonLogger.LogWarning("Exit already connected. Skipping.", 3, "Cocoon", "Generation"); continue;}
 
-
-
-            
+            //Get Random Room
+            GameObject roomToPlace = getRandomRoomThatFits(currentExit);
+            if (roomToPlace == null)
+            {
+                CocoonLogger.LogWarning("No room found that fits exit. Placing Wall.", 3, "Cocoon", "Generation");
+                //place wall later when i implement it, for now just skip
+                continue;
+            }
             yield return null;
             break; 
         }
-
         isGenerating = false;
     }
 }

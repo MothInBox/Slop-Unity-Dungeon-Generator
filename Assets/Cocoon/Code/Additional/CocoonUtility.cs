@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public static class CocoonUtility
 {
@@ -53,5 +54,18 @@ public static class CocoonUtility
             CocoonLogger.LogException(ex, 1, "CocoonUtility", "Exception");
             return default(T);
         }
+    }
+
+    public static Queue AddExitsToQueue(Room room, Queue exitQueue)
+     {
+        foreach (Exit exit in room.getExits())
+        {
+            exitQueue.Enqueue(exit);
+        }
+        return exitQueue;
+     }
+     public static void ClearExitQueue(Queue exitQueue)
+    {
+        exitQueue.Clear();
     }
 }
