@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Threading.Tasks;
+using System.Collections;
 
 public class Cocoon : MonoBehaviour
 {
@@ -34,13 +34,13 @@ public class Cocoon : MonoBehaviour
     {
         if (generateOnStart)
         {
-            GenerateAsync();
+            Generate();
         }
     }
 
-    public Task GenerateAsync()
+    public void Generate()
     {
-        return GenerateInternalAsync();
+        StartCoroutine(GenerateRoutine());
     }
 
     private void activateScene(Scene scene)
@@ -69,12 +69,12 @@ public class Cocoon : MonoBehaviour
         }
     }
 
-    private async Task GenerateInternalAsync()
+    private IEnumerator GenerateRoutine()
     {
         if (isGenerating)
         {
             CocoonLogger.LogWarning("Generation is already running.", 2, "Cocoon", "Generation");
-            return;
+            yield break;
         }
 
         isGenerating = true;
@@ -87,12 +87,12 @@ public class Cocoon : MonoBehaviour
             }
             CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed, 3, "Cocoon", "Generation");
 
-            await Task.Yield();
+            yield return null;
 
             //Create new Scene and activate it
             activateScene(CocoonUtility.createScene(DungeonPrefix + seed));
 
-            await Task.Yield();
+            yield return null;
 
             //Initialize cache
             cache = new CocoonCache();
@@ -100,7 +100,7 @@ public class Cocoon : MonoBehaviour
             startRoom = CocoonUtility.placeRoom(roomSettings.getStartRoomPrefab(seed), Vector3.zero, Quaternion.identity);
             if (movePlayerToStartRoom){movePlayerToStart();}
 
-            await Task.Yield();
+            yield return null;
 
             //INITIAL GENERATION DONE
 
@@ -111,7 +111,8 @@ public class Cocoon : MonoBehaviour
 
 
                 
-                break; 
+                                yield return null;
+                                break; 
             }
 
         } catch (System.Exception ex)
