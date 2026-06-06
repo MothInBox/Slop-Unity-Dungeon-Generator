@@ -22,14 +22,13 @@ public class Cocoon : MonoBehaviour
     [SerializeField]public bool movePlayerToStartRoom = true;
 
 
-
-
-
-
-
-
     void Start()
     {
-        
+        if (generateOnStart)
+        {
+            Generate();
+        }
     }
+
+    
 }
