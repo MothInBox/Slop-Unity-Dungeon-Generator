@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class Cocoon : MonoBehaviour
 {
@@ -27,14 +28,19 @@ public class Cocoon : MonoBehaviour
     private Scene currentDungeon;
     private Room startRoom;
     private Room endRoom;
+    private bool isGenerating;
 
     void Start()
     {
-        //Async dungeon generation
         if (generateOnStart)
         {
-            Generate();
+            GenerateAsync();
         }
+    }
+
+    public Task GenerateAsync()
+    {
+        return GenerateInternalAsync();
     }
 
     private void activateScene(Scene scene)
@@ -63,8 +69,15 @@ public class Cocoon : MonoBehaviour
         }
     }
 
-    private void Generate()
+    private async Task GenerateInternalAsync()
     {
+        if (isGenerating)
+        {
+            CocoonLogger.LogWarning("Generation is already running.", 2, "Cocoon", "Generation");
+            return;
+        }
+
+        isGenerating = true;
         try
         {
             if (seed == 0)
@@ -73,16 +86,41 @@ public class Cocoon : MonoBehaviour
                 CocoonLogger.LogInfo("Generating random seed.", 4, "Cocoon", "Generation");
             }
             CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed, 3, "Cocoon", "Generation");
+
+            await Task.Yield();
+
             //Create new Scene and activate it
             activateScene(CocoonUtility.createScene(DungeonPrefix + seed));
+
+            await Task.Yield();
+
             //Initialize cache
             cache = new CocoonCache();
             //place start room at 0,0,0
             startRoom = CocoonUtility.placeRoom(roomSettings.getStartRoomPrefab(seed), Vector3.zero, Quaternion.identity);
             if (movePlayerToStartRoom){movePlayerToStart();}
+
+            await Task.Yield();
+
+            //INITIAL GENERATION DONE
+
+            while (true) //main generation loop
+            {
+                
+
+
+
+                
+                break; 
+            }
+
         } catch (System.Exception ex)
         {
             CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
+        }
+        finally
+        {
+            isGenerating = false;
         }
     }
 }
