@@ -69,6 +69,60 @@ public class Cocoon : MonoBehaviour
         }
     }
 
+    private bool InitializeGenerationSeed()
+    {
+        try
+        {
+            if (seed == 0)
+            {
+                seed = CocoonUtility.RandomizeSeed(seed);
+                CocoonLogger.LogInfo("Generating random seed.", 4, "Cocoon", "Generation");
+            }
+
+            CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed, 3, "Cocoon", "Generation");
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
+            return false;
+        }
+    }
+
+    private bool ActivateDungeonScene()
+    {
+        try
+        {
+            activateScene(CocoonUtility.createScene(DungeonPrefix + seed));
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
+            return false;
+        }
+    }
+
+    private bool PlaceStartRoom()
+    {
+        try
+        {
+            cache = new CocoonCache();
+            startRoom = CocoonUtility.placeRoom(roomSettings.getStartRoomPrefab(seed), Vector3.zero, Quaternion.identity);
+            if (movePlayerToStartRoom)
+            {
+                movePlayerToStart();
+            }
+
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
+            return false;
+        }
+    }
+
     private IEnumerator GenerateRoutine()
     {
         if (isGenerating)
@@ -78,50 +132,43 @@ public class Cocoon : MonoBehaviour
         }
 
         isGenerating = true;
-        try
-        {
-            if (seed == 0)
-            {
-                seed = CocoonUtility.RandomizeSeed(seed);
-                CocoonLogger.LogInfo("Generating random seed.", 4, "Cocoon", "Generation");
-            }
-            CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed, 3, "Cocoon", "Generation");
-
-            yield return null;
-
-            //Create new Scene and activate it
-            activateScene(CocoonUtility.createScene(DungeonPrefix + seed));
-
-            yield return null;
-
-            //Initialize cache
-            cache = new CocoonCache();
-            //place start room at 0,0,0
-            startRoom = CocoonUtility.placeRoom(roomSettings.getStartRoomPrefab(seed), Vector3.zero, Quaternion.identity);
-            if (movePlayerToStartRoom){movePlayerToStart();}
-
-            yield return null;
-
-            //INITIAL GENERATION DONE
-
-            while (true) //main generation loop
-            {
-                
-
-
-
-                
-                                yield return null;
-                                break; 
-            }
-
-        } catch (System.Exception ex)
-        {
-            CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
-        }
-        finally
+        if (!InitializeGenerationSeed())
         {
             isGenerating = false;
+            yield break;
         }
+
+        yield return null;
+
+        if (!ActivateDungeonScene())
+        {
+            isGenerating = false;
+            yield break;
+        }
+
+        yield return null;
+
+        if (!PlaceStartRoom())
+        {
+            isGenerating = false;
+            yield break;
+        }
+
+        yield return null;
+
+        //INITIAL GENERATION DONE
+
+        while (true) //main generation loop
+        {
+            
+
+
+
+            
+            yield return null;
+            break; 
+        }
+
+        isGenerating = false;
     }
 }
