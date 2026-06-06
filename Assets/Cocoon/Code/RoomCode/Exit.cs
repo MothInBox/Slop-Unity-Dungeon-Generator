@@ -12,11 +12,11 @@ public class Exit : MonoBehaviour
     private bool isConnected;
     private Entry myEntryNode;
 
-    public void SetBlocked(bool blocked)
+    public void setBlocked(bool blocked)
     {
         isBlocked = blocked;
     }
-    public Gate[] GetGates()
+    public Gate[] getGates()
     {
         if (isBlocked)
         {
@@ -27,7 +27,7 @@ public class Exit : MonoBehaviour
             return placeIfNotBlocked;
         }
     }
-    public RoomType[] GetValidRoomTypes()
+    public RoomType[] getValidRoomTypes()
     {
         return validRoomTypes;
     }
@@ -35,7 +35,7 @@ public class Exit : MonoBehaviour
     {
         return isBlocked;
     }
-    public EntryType[] GetValidEntryTypes()
+    public EntryType[] getValidEntryTypes()
     {
         return validEntryTypes;
     }

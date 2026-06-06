@@ -69,40 +69,76 @@ public static class CocoonUtility
         exitQueue.Clear();
     }
 
-    public static T WeightedRandom<T>(T[] array, long seed) where T : IWeighted
+    public static T WeightedRandom<T>(string cacheKey, long seed, CocoonCache cache) where T : IWeighted
     {
+        return default(T);
+    }
+    public static bool BuildCacheForSettings(string keyPrefix, CocoonCache cache, RoomSettings roomSettings)
+    {  
+        int typeCounter = 0;
+        int groupCounter = 0; 
         try
         {
-            if (array == null || array.Length == 0){throw new ArgumentException("Array is null or empty.");}
-            //Assumes each element has a weight property and will catch if not.
-            int totalWeight = 0;
-            foreach (T element in array)
+            if (cache == null)
             {
-                totalWeight += element.getWeight();
-                CocoonLogger.LogInfo("Element: " + element.ToString() + " Weight: " + element.getWeight() + ", Total Weight: " + totalWeight, 4, "CocoonUtility", "WeightedRandom");
+                throw new ArgumentNullException("cache", "CocoonCache instance is required to build settings cache.");
             }
-            if (totalWeight <= 0)
+
+            if (roomSettings == null)
             {
-                CocoonLogger.LogWarning("Weighted random selection has non-positive total weight. Check element weights.", 2, "CocoonUtility", "WeightedRandom");
-                return array[0];
+                throw new ArgumentNullException("roomSettings", "RoomSettings is required to build caches.");
             }
-            int randomWeight = Randomize(seed) % totalWeight;
-            foreach (T element in array)
+
+            RoomTypeEntry[] randomRoomEntries = roomSettings.getRandomRoomEntries();
+            if (randomRoomEntries == null || randomRoomEntries.Length == 0)
             {
-                randomWeight -= element.getWeight();
-                CocoonLogger.LogInfo("Checking Element: " + element.ToString() + " Remaining Weight: " + randomWeight, 4, "CocoonUtility", "WeightedRandom");
-                if (randomWeight < 0)
+                throw new ArgumentException("RoomSettings has no random room entries to cache.");
+            }
+
+            string typesCacheId = keyPrefix + "_Types";
+            string groupingsCacheId = keyPrefix + "_Groupings";
+
+            // Build cache of RoomType to RoomTypeEntry and EntryType to RoomGroupingEntry.
+            cache.newCache<RoomType, RoomTypeEntry>(typesCacheId);
+            cache.newCache<EntryType, RoomGroupingEntry>(groupingsCacheId);
+
+            foreach (RoomTypeEntry typeEntry in randomRoomEntries)
+            {
+                if (typeEntry == null)
                 {
-                    CocoonLogger.LogInfo("Selected Element: " + element.ToString(), 4, "CocoonUtility", "WeightedRandom");
-                    return element;
+                    CocoonLogger.LogWarning("Encountered a null RoomTypeEntry while building cache. Skipping.", 2, "CocoonUtility", "Cache");
+                    continue;
+                }
+
+                cache.setInCache<RoomType, RoomTypeEntry>(typesCacheId, typeEntry.getType(), typeEntry);
+                typeCounter++;
+                //Build cache of EntryType to RoomGroupingEntry for this type
+                RoomGroupingEntry[] groupingEntries = typeEntry.getRoomGroupingsEntry();
+                if (groupingEntries == null || groupingEntries.Length == 0)
+                {
+                    CocoonLogger.LogWarning("RoomTypeEntry " + typeEntry.getType() + " has no grouping entries. Skipping grouping cache population.", 3, "CocoonUtility", "Cache");
+                    continue;
+                }
+
+                foreach (RoomGroupingEntry groupingEntry in groupingEntries)
+                {
+                    if (groupingEntry == null)
+                    {
+                        CocoonLogger.LogWarning("Encountered a null RoomGroupingEntry while building cache. Skipping.", 2, "CocoonUtility", "Cache");
+                        continue;
+                    }
+
+                    cache.setInCache<EntryType, RoomGroupingEntry>(groupingsCacheId, groupingEntry.getEntryType(), groupingEntry);
+                    groupCounter++;
                 }
             }
-            CocoonLogger.LogWarning("Weighted random selection failed to select an element. Check weights. Returning first element as fallback.", 1, "CocoonUtility", "WeightedRandom");
-            return array[0];
-        } catch (Exception ex)
+            CocoonLogger.LogInfo("Cached: " + typeCounter + " types and " + groupCounter + " groups.", 4, "CocoonUtility", "Cache");
+            return true;
+        } catch (System.Exception ex)
         {
+            ex.Data.Add("Cached: " + typeCounter + " types and " + groupCounter + " groups before failing.", "CacheBuildInfo");
             CocoonLogger.LogException(ex, 1, "CocoonUtility", "Exception");
-            return default(T);
+            return false;
         }
     }
 }

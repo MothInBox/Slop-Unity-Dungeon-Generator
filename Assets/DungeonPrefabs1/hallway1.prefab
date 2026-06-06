@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6659588564013350367}
   - component: {fileID: 88883736232317861}
   m_Layer: 0
-  m_Name: TemplateRoom
+  m_Name: hallway1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,7 +133,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7671821902830169752}
@@ -348,7 +348,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
       propertyPath: validRoomTypes.Array.size
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
       propertyPath: validEntryTypes.Array.size
@@ -356,19 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
       propertyPath: 'validRoomTypes.Array.data[1]'
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
-      propertyPath: 'validRoomTypes.Array.data[2]'
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
-      propertyPath: 'validRoomTypes.Array.data[3]'
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
-      propertyPath: 'validRoomTypes.Array.data[4]'
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8776617179033978122, guid: f95c66e177ca3ae2d87d33c805f1397e, type: 3}
       propertyPath: 'validEntryTypes.Array.data[0]'

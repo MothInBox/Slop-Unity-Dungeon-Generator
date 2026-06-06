@@ -35,6 +35,8 @@ public class Cocoon : MonoBehaviour
 
     void Start()
     {
+        cache = new CocoonCache();
+        CocoonUtility.BuildCacheForSettings("Cocoon_", cache, roomSettings);
         if (generateOnStart)
         {
             Generate();
@@ -110,7 +112,6 @@ public class Cocoon : MonoBehaviour
     {
         try
         {
-            cache = new CocoonCache();
             startRoom = CocoonUtility.placeRoom(roomSettings.getStartRoomPrefab(seed), Vector3.zero, Quaternion.identity);
             if (movePlayerToStartRoom)
             {
@@ -126,6 +127,8 @@ public class Cocoon : MonoBehaviour
         }
     }
 
+
+
     private GameObject getRandomRoomThatFits(Exit exit)
     {
             // roomSettings -> 
@@ -134,13 +137,21 @@ public class Cocoon : MonoBehaviour
             // roomPrefabsEntry | Weight and pick a room prefab, if it dosent fit try another group, if no groups fit try another type, repeat until out of options.
         try
         {
+            int typeCounter = 0;
+            int groupCounter = 0;
+
 
         } catch (System.Exception ex)
         {
-
+            CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
+        } finally
+        {
+            cache.removeCache("RoomFitCache_Types");
+            cache.removeCache("RoomFitCache_Groupings");
         }
         return null;
     }
+
 
     private IEnumerator GenerateRoutine()
     {

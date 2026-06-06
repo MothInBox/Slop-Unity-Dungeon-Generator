@@ -7,6 +7,7 @@ public class RoomGroupingEntry : IWeighted
     [SerializeField] private RoomPrefabsEntry[] roomPrefabsEntry;
     [Tooltip("The maximum number of rooms that can be placed from this grouping.")]
     [SerializeField][Range(0, 255)] private byte groupLimit;
+    [SerializeField] private EntryType entryType;
 
 
 
@@ -20,6 +21,10 @@ public class RoomGroupingEntry : IWeighted
         {
             groupWeight += entry.getWeight();
         }
+    }
+    public EntryType getEntryType()
+    {
+        return entryType;
     }
     public int getWeight()
     {
