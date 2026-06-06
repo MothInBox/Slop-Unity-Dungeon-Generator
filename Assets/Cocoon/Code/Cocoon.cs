@@ -55,11 +55,11 @@ public class Cocoon : MonoBehaviour
             //move player to dungeon:
             SceneManager.MoveGameObjectToScene(player, currentDungeon);
             player.transform.SetPositionAndRotation(startEntry.GetTransform().Item2, startEntry.GetTransform().Item1);
-            CocoonLogger.LogInfo("Player moved to start room at position: " + player.transform.position + " and rotation: " + player.transform.rotation + " in scene: " + currentDungeon.name, 4);
+            CocoonLogger.LogInfo("Player moved to start room at position: " + player.transform.position + " and rotation: " + player.transform.rotation + " in scene: " + currentDungeon.name, 4, "Cocoon", "Player");
         }
         else
         {
-            CocoonLogger.LogWarning("Player object with tag 'Player' not found. Cannot move player to start room.", 1);
+            CocoonLogger.LogWarning("Player object with tag 'Player' not found. Cannot move player to start room.", 2, "Cocoon", "Player");
         }
     }
 
@@ -70,9 +70,9 @@ public class Cocoon : MonoBehaviour
             if (seed == 0)
             {
                 seed = CocoonUtility.RandomizeSeed(seed);
-                CocoonLogger.LogInfo("Generating random seed.", 1);
+                CocoonLogger.LogInfo("Generating random seed.", 4, "Cocoon", "Generation");
             }
-            CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed, 1);
+            CocoonLogger.LogInfo("Starting Dungeon Generation with seed: " + seed, 3, "Cocoon", "Generation");
             //Create new Scene and activate it
             activateScene(CocoonUtility.createScene(DungeonPrefix + seed));
             //Initialize cache
@@ -82,7 +82,7 @@ public class Cocoon : MonoBehaviour
             if (movePlayerToStartRoom){movePlayerToStart();}
         } catch (System.Exception ex)
         {
-            CocoonLogger.LogException(ex, 1);
+            CocoonLogger.LogException(ex, 1, "Cocoon", "Exception");
         }
     }
 }

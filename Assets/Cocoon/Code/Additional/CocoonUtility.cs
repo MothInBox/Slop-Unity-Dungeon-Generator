@@ -50,7 +50,7 @@ public static class CocoonUtility
             return array[Randomize(seed) % array.Length];
         } catch (Exception ex)
         {
-            CocoonLogger.LogException(ex, 1);
+            CocoonLogger.LogException(ex, 1, "CocoonUtility", "Exception");
             return default(T);
         }
     }

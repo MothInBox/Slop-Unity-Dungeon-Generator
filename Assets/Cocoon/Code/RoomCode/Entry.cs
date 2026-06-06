@@ -30,7 +30,7 @@ public class Entry : MonoBehaviour
     {
         if (entryType == EntryType.Spawn)
         {
-            CocoonLogger.LogWarning("Attempting to connect to a spawn entry. This should not happen. Ignoring.", 1);
+            CocoonLogger.LogWarning("Attempting to connect to a spawn entry. This should not happen. Ignoring.", 2, "Entry", "Connection");
             return;
         }
         if(isConnected){return;}

@@ -18,39 +18,39 @@ public class CocoonLogger : MonoBehaviour
         current = this;
         if (enableInfoLevel > 0 || enableWarningLevel > 0 || enableErrorLevel > 0 || enableGizmos)
         {
-            LogInfo("Cocoon Logger Initialized. Enable Info: " + enableInfoLevel + " | Enable Warning: " + enableWarningLevel + " | Enable Error: " + enableErrorLevel + " | Enable Gizmos: " + enableGizmos, 1);
+            LogInfo("Cocoon Logger Initialized. Enable Info: " + enableInfoLevel + " | Enable Warning: " + enableWarningLevel + " | Enable Error: " + enableErrorLevel + " | Enable Gizmos: " + enableGizmos, 1, "Logger", "Initialization");
         }
     }
 
-    public static void LogInfo(string message, byte importance = 1)
+    public static void LogInfo(string message, byte importance = 1, string source = "General", string category = "General")
     {
         if (current != null && importance <= current.enableInfoLevel)
         {
-            current.LogInfoInternal(message, importance);
+            current.LogInfoInternal(message, importance, source, category);
         }
     }
 
-    public static void LogWarning(string message, byte importance = 1)
+    public static void LogWarning(string message, byte importance = 1, string source = "General", string category = "General")
     {
         if (current != null && importance <= current.enableWarningLevel)
         {
-            current.LogWarningInternal(message, importance);
+            current.LogWarningInternal(message, importance, source, category);
         }
     }
 
-    public static void LogError(string message, byte importance = 1)
+    public static void LogError(string message, byte importance = 1, string source = "General", string category = "General")
     {
         if (current != null && importance <= current.enableErrorLevel)
         {
-            current.LogErrorInternal(message, importance);
+            current.LogErrorInternal(message, importance, source, category);
         }
     }
 
-    public static void LogException(System.Exception ex, byte importance = 5)
+    public static void LogException(System.Exception ex, byte importance = 5, string source = "General", string category = "General")
     {
         if (current != null && importance <= current.enableErrorLevel)
         {
-            current.LogExceptionInternal(ex, importance);
+            current.LogExceptionInternal(ex, importance, source, category);
         }
     }
     
@@ -59,29 +59,48 @@ public class CocoonLogger : MonoBehaviour
         return current != null ? current.enableGizmos : false;
     }
 
-    private void LogInfoInternal(string message, byte importance)
+    private void LogInfoInternal(string message, byte importance, string source, string category)
     {
-        Debug.Log(BuildPrefix(importance) + message);
+        Debug.Log(BuildPrefix(importance, source, category) + message);
     }
 
-    private void LogWarningInternal(string message, byte importance)
+    private void LogWarningInternal(string message, byte importance, string source, string category)
     {
-        Debug.LogWarning(BuildPrefix(importance) + message);
+        Debug.LogWarning(BuildPrefix(importance, source, category) + message);
     }
 
-    private void LogErrorInternal(string message, byte importance)
+    private void LogErrorInternal(string message, byte importance, string source, string category)
     {
-        Debug.LogError(BuildPrefix(importance) + message);
+        Debug.LogError(BuildPrefix(importance, source, category) + message);
     }
 
-    private void LogExceptionInternal(System.Exception ex, byte importance)
+    private void LogExceptionInternal(System.Exception ex, byte importance, string source, string category)
     {
-        Debug.LogError(BuildPrefix(importance) + "Exception: " + ex.Message + "\nStack Trace: " + ex.StackTrace);
+        Debug.LogError(BuildPrefix(importance, source, category) + "Exception: " + ex.Message + "\nStack Trace: " + ex.StackTrace);
     }
 
-    private string BuildPrefix(byte importance)
+    private string BuildPrefix(byte importance, string source, string category)
     {
-        return "[Cocoon Debug | Importance " + importance + " | Frame " + Time.frameCount + " | Time " + Time.timeSinceLevelLoad.ToString("F3") + "] ";
+        return "<color=" + GetImportanceColor(importance) + ">[Cocoon Debug | I" + importance + " | Frame " + Time.frameCount + " | Time " + Time.timeSinceLevelLoad.ToString("F3") + " | Source " + source + " | Category " + category + "]</color> ";
+    }
+
+    private string GetImportanceColor(byte importance)
+    {
+        switch (importance)
+        {
+            case 1:
+                return "#FF3B30";
+            case 2:
+                return "#FF9500";
+            case 3:
+                return "#FFD60A";
+            case 4:
+                return "#34C759";
+            case 5:
+                return "#8E8E93";
+            default:
+                return "#FFFFFF";
+        }
     }
 
 }

@@ -24,7 +24,7 @@ public class RoomGroupingEntry
     public int getWeight()
     {
         calculateWeight();
-        CocoonLogger.LogInfo("RoomGroupingEntry GroupWeight: " + groupWeight, 5);
+        CocoonLogger.LogInfo("RoomGroupingEntry GroupWeight: " + groupWeight, 5, "RoomGroupingEntry", "Weight");
         return groupWeight;
     }
     public byte getLimit()
