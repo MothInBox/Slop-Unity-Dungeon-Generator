@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class RoomTypeEntry
+public class RoomTypeEntry : IWeighted
 {
     [Tooltip("The type of room this entry represents. This can be used to categorize rooms and apply specific generation rules based on the type.")]
     [SerializeField] private RoomType roomType;
@@ -16,9 +16,9 @@ public class RoomTypeEntry
     {
         return roomType;
     }
-    public byte getWeight()
+    public int getWeight()
     {
-        return typeWeight;
+        return (int)typeWeight;
     }
     public byte getLimit()
     {

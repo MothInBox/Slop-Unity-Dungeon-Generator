@@ -1,14 +1,14 @@
 using UnityEngine;
 
 [System.Serializable]
-public class Gate
+public class Gate : IWeighted
 {
     [SerializeField] private GameObject GatePrefab;
     [SerializeField][Range(0, 255)] private byte Weight;
 
-    public byte getWeight()
+    public int getWeight()
     {
-        return Weight;
+        return (int)Weight;
     }
     public GameObject getGatePrefab()
     {

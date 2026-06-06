@@ -68,4 +68,41 @@ public static class CocoonUtility
     {
         exitQueue.Clear();
     }
+
+    public static T WeightedRandom<T>(T[] array, long seed) where T : IWeighted
+    {
+        try
+        {
+            if (array == null || array.Length == 0){throw new ArgumentException("Array is null or empty.");}
+            //Assumes each element has a weight property and will catch if not.
+            int totalWeight = 0;
+            foreach (T element in array)
+            {
+                totalWeight += element.getWeight();
+                CocoonLogger.LogInfo("Element: " + element.ToString() + " Weight: " + element.getWeight() + ", Total Weight: " + totalWeight, 4, "CocoonUtility", "WeightedRandom");
+            }
+            if (totalWeight <= 0)
+            {
+                CocoonLogger.LogWarning("Weighted random selection has non-positive total weight. Check element weights.", 2, "CocoonUtility", "WeightedRandom");
+                return array[0];
+            }
+            int randomWeight = Randomize(seed) % totalWeight;
+            foreach (T element in array)
+            {
+                randomWeight -= element.getWeight();
+                CocoonLogger.LogInfo("Checking Element: " + element.ToString() + " Remaining Weight: " + randomWeight, 4, "CocoonUtility", "WeightedRandom");
+                if (randomWeight < 0)
+                {
+                    CocoonLogger.LogInfo("Selected Element: " + element.ToString(), 4, "CocoonUtility", "WeightedRandom");
+                    return element;
+                }
+            }
+            CocoonLogger.LogWarning("Weighted random selection failed to select an element. Check weights. Returning first element as fallback.", 1, "CocoonUtility", "WeightedRandom");
+            return array[0];
+        } catch (Exception ex)
+        {
+            CocoonLogger.LogException(ex, 1, "CocoonUtility", "Exception");
+            return default(T);
+        }
+    }
 }

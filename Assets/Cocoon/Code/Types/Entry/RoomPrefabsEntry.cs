@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class RoomPrefabsEntry
+public class RoomPrefabsEntry : IWeighted
 {
     [Tooltip("The prefab for this room. Ensure the prefab has an Enter node and an Exit node for stitching with the other rooms.")]
     [SerializeField] private GameObject roomPrefab;
@@ -10,9 +10,9 @@ public class RoomPrefabsEntry
     [Tooltip("The maximum number of times this room type can be placed.")]
     [SerializeField][Range(0, 255)] private byte roomLimit;
 
-    public byte getWeight()
+    public int getWeight()
     {
-        return roomWeight;
+        return (int)roomWeight;
     }
     public byte getLimit()
     {

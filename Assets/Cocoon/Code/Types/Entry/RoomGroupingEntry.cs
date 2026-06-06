@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class RoomGroupingEntry
+public class RoomGroupingEntry : IWeighted
 {
     [Tooltip("The prefabs belonging to this grouping. The GroupWeight is calculated by combining the weights of all prefabs in this grouping. Ensure all grouped prefabs have the same Collision size and take into account the orientation after being placed (Entry node placement).")]
     [SerializeField] private RoomPrefabsEntry[] roomPrefabsEntry;
