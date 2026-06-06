@@ -32,7 +32,8 @@ This creates the basis of the procedural generation, but I wanted to be able to 
 
 ## Future Improvements
  - Optimise types (a weight could be a byte instead of an int), as this would take up negligble memory per prefab in comparison
- - Groupings to minimise collision checking (Group rooms with same sizes / collisions (to avoid collision retry abuse) with weights & limits)
+ - Groupings to minimise collision checking (Group rooms with same sizes / collisions (to avoid collision retry abuse) taking into account orientation and with cumulative weights of inside prefabs & its own limits)
+ - Allow certain types of exits and enterances (Ladder or Large door or Small door) to allow for varied passages. Could also be used in a fairly hacky way to fill gaps (say large door but just fill gap to make small)
  - Regenerate button during debugging
  - Make exit and enter nodes into prefabs to be placed in and a template room prefab, for ease of use.
  - implement backtracking when the end room cannot be placed, instead of regenerating, though the chances are slim with the current system.
